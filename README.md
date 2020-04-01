@@ -55,3 +55,37 @@ There are some built in variables:
 - `@ISDIRVALID`: Is the open directory valid
 - `$FILENAME`: Represents the current filename
 - `@ISDIR`: 1 if the last read file is a DIR, otherwise 0
+
+## Flow control
+
+You can use `if()`, `goto()`, `check()` and `math()` functions to control the flow of your program. Example:
+```
+@i = setInt(0);
+?LOOP;
+@check = check(@i "<=", 10);
+if (@check){
+    @i = math(@i, "+", 1);
+    printInt(@i);
+    goto (?LOOP);
+}
+```
+This will print numbers 0 to 10 as `@i: x`
+
+Another example:
+
+```
+printf("Press a button");
+
+pause();
+
+if (@BTN_VOL+){
+    printf("Vol+ has been pressed");
+}
+if (@BTN_VOL-){
+    printf("Vol- has been pressed");
+}
+if (@BTN_POWER){
+    printf("Power has been pressed");
+}
+
+```
