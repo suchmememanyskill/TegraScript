@@ -14,7 +14,7 @@ Function | Args | Description | Output
 `math(int arg1, string arg2, int arg3)` | arg1 "operator arg2" arg3. Valid operators (arg2s): `"+"`, `"-"`, `"*"`, `"/"` | Does a math operation and returns the result | returns the result of the math operation
 `check(int arg1, string arg2, int arg3)` | arg1 "operator arg2" arg3. Valid operators (arg2s): `"=="`, `"!="`, `">="`, `"<="`, `">"`, `"<"` | Does a check and returns the result. result is either 0 or 1 | returns 0 or 1
 `invert(int arg1)` | - | makes non 0 integers a 0, and vise versa | returns 0 or 1
-`setInt(int arg1`)` | - | returns arg1, for setting of variables | returns arg1
+`setInt(int arg1)` | - | returns arg1, for setting of variables | returns arg1
 `setString(string in, $svar out)` | $svar is a string variable, written as `$var` | copies in to out | returns 0
 `setStringIndex(int in, $svar out)` | looks up earlier defined strings in order. User defined strings start at index 1. $svar is a string variable | Copies string table index to out | returns 0
 `combineStrings(string s1, string s2, $svar out)` | $svar is a string variable | combines s1 and s2 (as s1s2) and copies it into out | returns 0
