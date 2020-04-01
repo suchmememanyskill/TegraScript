@@ -34,3 +34,24 @@ Function | Args | Description | Output
 `fs_readDir()` | - | reads entry out of dir. Atomatically calls `fs_closeDir()` if the end of the dir is reached. Saves result to `$FILENAME` and `@ISDIR` | returns 0
 `mmc_connect(string mmctype)` | mmctype: either `SYSMMC` or `EMUMMC` | connects SYSMMC or EMUMMC to the system. Specify partition with `mmc_mount()` | returns 0
 `mmc_mount(string partition)` | partition: either `SYSTEM` or `USER` | mounts partition in previously connected mmc | returns >= 0
+
+## Variables
+
+TegraScript has 3 kinds of variables, @ints, $strings, and ?marks
+You can define @ints by writing `@variable = setInt(0);` (or any function for that matter)
+You can define $strings with the use of `setString();`, `setStringIndex();` and `combineStrings();`
+You can define ?marks by using them as a command, so just `?variable;` will work
+
+You can use these variables in place of int, string or jmp inputs respectively, so for example `@b = setInt(@a)` or `setString($a, $b)`
+
+### Built in variables
+There are some built in variables:
+- `@EMUMMC`: 1 if an emummc was found, 0 if no emummc was found
+- `@RESULT`: result of the last ran function
+- `@BTN_POWER`, `@BTN_VOL+`, `@BTN_VOL-`: result of the `pause()` function, represents which button got pressed during the `pause()` function
+- `$CURRENTPATH`: Represents the current path
+
+(if `fs_readdir()` got ran)
+- `@ISDIRVALID`: Is the open directory valid
+- `$FILENAME`: Represents the current filename
+- `@ISDIR`: 1 if the last read file is a DIR, otherwise 0
