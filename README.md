@@ -37,10 +37,10 @@ Function | Args | Description | Output
 
 ## Variables
 
-TegraScript has 3 kinds of variables, @ints, $strings, and ?marks
-You can define @ints by writing `@variable = setInt(0);` (or any function for that matter)
-You can define $strings with the use of `setString();`, `setStringIndex();` and `combineStrings();`
-You can define ?marks by using them as a command, so just `?variable;` will work
+TegraScript has 3 kinds of variables, @ints, $strings, and ?marks.
+- You can define @ints by writing `@variable = setInt(0);` (or any function for that matter).
+- You can define $strings with the use of `setString();`, `setStringIndex();` and `combineStrings();`.
+- You can define ?marks by using them as a command, so just `?variable;` will work.
 
 You can use these variables in place of int, string or jmp inputs respectively, so for example `@b = setInt(@a)` or `setString($a, $b)`
 
