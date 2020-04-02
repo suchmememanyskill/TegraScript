@@ -62,7 +62,7 @@ You can use `if()`, `goto()`, `check()` and `math()` functions to control the fl
 ```
 @i = setInt(0);
 ?LOOP;
-@check = check(@i "<=", 10);
+@check = check(@i, "<=", 10);
 if (@check){
     @i = math(@i, "+", 1);
     printInt(@i);
