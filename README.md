@@ -32,6 +32,7 @@ Function | Args | Description | Output
 `fs_openDir(string path)` | path: full path to folder | opens a directory for use with `fs_readDir()` and sets `@ISDIRVALID` to 1 | returns >= 0
 `fs_closeDir()` | - | closes current open directory and sets `@ISDIRVALID` to 0 | returns 0
 `fs_readDir()` | - | reads entry out of dir. Atomatically calls `fs_closeDir()` if the end of the dir is reached. Saves result to `$FILENAME` and `@ISDIR` | returns 0
+`fs_combinePath(string left, string right, $var out)` | - | Will combine paths, like `sd:/` and `folder` to `sd:/folder`, also `sd:/folder` and `folder2` to `sd:/folder/folder2` | returns 0
 `mmc_connect(string mmctype)` | mmctype: either `SYSMMC` or `EMUMMC` | connects SYSMMC or EMUMMC to the system. Specify partition with `mmc_mount()` | returns 0
 `mmc_mount(string partition)` | partition: either `SYSTEM` or `USER` | mounts partition in previously connected mmc | returns >= 0
 
@@ -43,6 +44,8 @@ TegraScript has 3 kinds of variables, @ints, $strings, and ?marks.
 - You can define ?marks by using them as a command, so just `?variable;` will work.
 
 You can use these variables in place of int, string or jmp inputs respectively, so for example `@b = setInt(@a)` or `setString($a, $b)`
+
+Note though that the int variables can't be assigned negative values
 
 ### Built in variables
 There are some built in variables:
