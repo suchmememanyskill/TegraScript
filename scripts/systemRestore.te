@@ -1,0 +1,132 @@
+setString("BOOT0.bin", $BOOT0Path);
+setString("BOOT1.bin", $BOOT1Path);
+setString("BCPKG2-1-Normal-Main", $BCPKG1_);
+setString("BCPKG2-2-Normal-Sub", $BCPKG2_);
+setString("BCPKG2-3-SafeMode-Main", $BCPKG3_);
+setString("BCPKG2-4-SafeMode-Sub", $BCPKG4_);
+
+printf("System restore script");
+printf("");
+printf("Checking requirements...");
+
+fs_combinePath($CURRENTPATH, "SYSTEM", $path);
+@check = fs_exists($path);
+@checkinv = invert(@check);
+if (@checkinv){
+	printf("System DIR not found!");
+	printf("Press any button to exit");
+	pause();
+	exit();
+}
+
+fs_combinePath($CURRENTPATH, "boot.bis", $path);
+@check = fs_exists($path);
+@checkinv = invert(@check);
+if (@checkinv){
+	printf("boot.bis not found!");
+	printf("Press any button to exit");
+	pause();
+	exit();
+}
+
+fs_mkdir("sd:/tegraexplorer");
+fs_mkdir("sd:/tegraexplorer/bisextract");
+fs_extractBisFile($path, "sd:/tegraexplorer/bisextract");
+
+printf("Ready to restore!");
+printf("");
+
+printf("Press vol+ to restore SYSMMC");
+if (@EMUMMC){
+    printf("Press vol- to restore EMUMMC");
+}
+printf("Press power to exit");
+printf("");
+
+pause();
+
+if (@BTN_VOL+){
+    printf("Mounting SYSMMC...");
+    mmc_connect("SYSMMC");
+}
+if (@BTN_VOL-){
+    @noemu = invert(@EMUMMC);
+    if (@noemu){
+        exit();
+    }
+    printf("Mounting EMUMMC...");
+    mmc_connect("EMUMMC");
+}
+if (@BTN_POWER){
+    exit();
+}
+
+setColor("RED");
+printf("");
+printf("WARNING!!!");
+printf("If you do not know exactly what this does");
+printf("    STOP!");
+printf("");
+printf("This will fuck with your system!");
+printf("Only do this as");
+printf("    a last ditch recovery effort!");
+printf("");
+setColor("GREEN");
+printf("For help go here:");
+printf("https://discord.gg/C29hYvh");
+setColor("WHITE");
+printf("");
+wait(10);
+printf("Vol+ to continue");
+printf("Vol- or power to exit");
+
+pause();
+
+@checkinv = invert(@BTN_VOL+);
+if (@checkinv){
+	exit();
+}
+
+clearscreen();
+
+printf("GO!");
+printf("");
+printf("Restoring BIS");
+
+@i = setInt(1);
+?RESLOOP;
+setStringIndex(@i, $part);
+combineStrings("sd:/tegraexplorer/bisextract/", $part, $path);
+mmc_restorePart($path);
+if (@RESULT){
+	setColor("RED");
+	printf("Restoring went wrong!");
+	printf("Part:");
+	printf($part);
+	pause();
+	exit();
+}
+@i = math(@i, "+", 1);
+@check = check(@i, "<", 7);
+if (@check){
+	goto(?RESLOOP);
+}
+
+printf("");
+printf("Restoring SYSTEM");
+mmc_mount("SYSTEM");
+
+fs_combinePath($CURRENTPATH, "SYSTEM/Contents/registered", $path);
+
+fs_delRecursive("emmc:/Contents/registered");
+fs_copyRecursive($path, "emmc:/Contents");
+
+fs_combinePath($CURRENTPATH, "SYSTEM/save/8000000000000120", $path);
+
+fs_copy($path, "emmc:/save/8000000000000120");
+
+printf("");
+printf("Done!");
+printf("Press any button to exit");
+pause();
+exit();
