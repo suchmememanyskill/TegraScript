@@ -8,6 +8,7 @@ Function | Args | Description | Output
 `printf(string arg1)` | arg1: Text to print to the screen | writes text to the screen | returns 0
 `printInt(int arg1)` | arg1: Int variable to print | Displays an int variable to the screen in the format `@var: (number)` | returns 0
 `setPrintPos(int arg1, int arg2)` | arg1: sets cursor position x, arg2: sets cursor position y | sets cursor to a position on the screen. Max X is 42, max Y is 78 | returns 0
+`clearscreen()` | - | clears the screen | returns 0
 `setColor(string arg1)` | arg1: color string. Valid args: `RED`, `ORANGE`, `YELLOW`, `GREEN`, `BLUE`, `VIOLET`, `WHITE` | Changes the color of the text printed | returns 0
 `if(int arg1)` | arg1: checks if interger is true or false (not 0 or 0) | Part of flow control. Runs code inside {} | returns 0
 `goto(jmp arg1)` | arg1: marker written as `?JUMP` | jumps to the marker specified | returns 0
@@ -33,6 +34,7 @@ Function | Args | Description | Output
 `fs_closeDir()` | - | closes current open directory and sets `@ISDIRVALID` to 0 | returns 0
 `fs_readDir()` | - | reads entry out of dir. Atomatically calls `fs_closeDir()` if the end of the dir is reached. Saves result to `$FILENAME` and `@ISDIR` | returns 0
 `fs_combinePath(string left, string right, $var out)` | - | Will combine paths, like `sd:/` and `folder` to `sd:/folder`, also `sd:/folder` and `folder2` to `sd:/folder/folder2` | returns 0
+`fs_extractBisFile(string path, string outfolder)` | - | take .bis and extract it into outfolder | returns >= 0
 `mmc_connect(string mmctype)` | mmctype: either `SYSMMC` or `EMUMMC` | connects SYSMMC or EMUMMC to the system. Specify partition with `mmc_mount()` | returns 0
 `mmc_mount(string partition)` | partition: either `SYSTEM` or `USER` | mounts partition in previously connected mmc | returns >= 0
 `mmc_dumpPart(string type, string out)` | type: Either `BOOT` or a partition on the gpt. out: Out folder: for `BOOT` this needs to be a folder, otherwise a filepath | Dumps a part from the e(mu)mmc. Determined by earlier mmc_connect's | returns >= 0
