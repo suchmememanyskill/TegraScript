@@ -11,6 +11,7 @@ Function | Args | Description | Output
 `clearscreen()` | - | clears the screen | returns 0
 `setColor(string arg1)` | arg1: color string. Valid args: `RED`, `ORANGE`, `YELLOW`, `GREEN`, `BLUE`, `VIOLET`, `WHITE` | Changes the color of the text printed | returns 0
 `if(int arg1)` | arg1: checks if interger is true or false (not 0 or 0) | Part of flow control. Runs code inside {} | returns 0
+`if(int arg1, string arg2, int arg3)` (overload) | See `check()` and the first `if()` | Part of flow control. Runs code inside {}. Accepts statements like `if (1, == , 1) {}` | returns 0
 `goto(int location)` | location: interger aquired by `getLocation()` | jumps to the character offset specified | returns 0
 `getLocation()` | - | Returns the current script location, for use with `goto()` | returns > 0
 `math(int arg1, string arg2, int arg3)` | arg1 "operator arg2" arg3. Valid operators (arg2s): `"+"`, `"-"`, `"*"`, `"/"` | Does a math operation and returns the result | returns the result of the math operation
