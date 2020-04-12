@@ -11,7 +11,8 @@ Function | Args | Description | Output
 `clearscreen()` | - | clears the screen | returns 0
 `setColor(string arg1)` | arg1: color string. Valid args: `RED`, `ORANGE`, `YELLOW`, `GREEN`, `BLUE`, `VIOLET`, `WHITE` | Changes the color of the text printed | returns 0
 `if(int arg1)` | arg1: checks if interger is true or false (not 0 or 0) | Part of flow control. Runs code inside {} | returns 0
-`goto(jmp arg1)` | arg1: marker written as `?JUMP` | jumps to the marker specified | returns 0
+`goto(int location)` | location: interger aquired by `getLocation()` | jumps to the character offset specified | returns 0
+`getLocation()` | - | Returns the current script location, for use with `goto()` | returns > 0
 `math(int arg1, string arg2, int arg3)` | arg1 "operator arg2" arg3. Valid operators (arg2s): `"+"`, `"-"`, `"*"`, `"/"` | Does a math operation and returns the result | returns the result of the math operation
 `check(int arg1, string arg2, int arg3)` | arg1 "operator arg2" arg3. Valid operators (arg2s): `"=="`, `"!="`, `">="`, `"<="`, `">"`, `"<"` | Does a check and returns the result. result is either 0 or 1 | returns 0 or 1
 `invert(int arg1)` | - | makes non 0 integers a 0, and vise versa | returns 0 or 1
@@ -42,12 +43,11 @@ Function | Args | Description | Output
 
 ## Variables
 
-TegraScript has 3 kinds of variables, @ints, $strings, and ?marks.
+TegraScript has 2 kinds of variables, @ints, $strings.
 - You can define @ints by writing `@variable = setInt(0);` (or any function for that matter).
 - You can define $strings with the use of `setString();`, `setStringIndex();` and `combineStrings();`.
-- You can define ?marks by using them as a command, so just `?variable;` will work.
 
-You can use these variables in place of int, string or jmp inputs respectively, so for example `@b = setInt(@a)` or `setString($a, $b)`
+You can use these variables in place of int or string inputs, so for example `@b = setInt(@a)` or `setString($a, $b)`
 
 Note though that the int variables can't be assigned negative values
 
@@ -65,34 +65,43 @@ There are some built in variables:
 
 ## Flow control
 
-You can use `if()`, `goto()`, `check()` and `math()` functions to control the flow of your program. Example:
+You can use `if()`, `goto()` and `math()` functions to control the flow of your program. Example:
 ```
-@i = setInt(0);
-?LOOP;
-@check = check(@i, "<=", 10);
-if (@check){
-    @i = math(@i, "+", 1);
-    printInt(@i);
-    goto (?LOOP);
+@i = setInt(0)
+@LOOP = getLocation()
+if (@i, <= , 10){
+    @i = math(@i, + , 1)
+    printInt(@i)
+    goto (@LOOP)
 }
+
+pause()
 ```
 This will print numbers 0 to 10 as `@i: x`
 
 Another example:
 
 ```
-printf("Press a button");
+printf("Press a button")
 
-pause();
+pause()
 
 if (@BTN_VOL+){
-    printf("Vol+ has been pressed");
+    printf("Vol+ has been pressed")
 }
 if (@BTN_VOL-){
-    printf("Vol- has been pressed");
+    printf("Vol- has been pressed")
 }
 if (@BTN_POWER){
-    printf("Power has been pressed");
+    printf("Power has been pressed")
 }
 
+pause()
 ```
+
+# Changelog
+
+#### 12/04/2020
+With the release of TegraExplorer v1.5.1, there has been some breaking changes. `?LOOP` and `goto(?LOOP)` is no longer valid syntax. Replace this with `@LOOP = getLocation()` and `goto(@LOOP)`.
+
+Other than this, `@check = check(1, "==", 1) if (@check) {}` can be simplified to `if (1, == , 1) {}`. For `math()` functions, you don't have to enclose operators in "" anymore (just like check/if), like `@math = math(1, + , 1)`

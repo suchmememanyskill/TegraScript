@@ -1,50 +1,49 @@
-printf("Such save, many dump");
-printf("What mmc would you like to dump from");
-printf("Press + for sysnand");
+printf("TegraScript save dumper")
+printf("What mmc would you like to dump from")
+printf("Press + for sysnand")
 if (@EMUMMC) {
-	printf("Or press - for emummc");
+	printf("Or press - for emummc")
 }
-printf("Press power to cancel");
+printf("Press power to cancel")
 
-pause();
+pause()
 
 if (@BTN_VOL+){
-    printf("Mounting SYSMMC...");
-    mmc_connect("SYSMMC");
+    printf("Mounting SYSMMC...")
+    mmc_connect("SYSMMC")
 }
 if (@BTN_VOL-){
-    @noemu = invert(@EMUMMC);
-    if (@noemu){
-        exit();
+    if (@EMUMMC, == , 0){
+        exit()
     }
-    printf("Mounting EMUMMC...");
-    mmc_connect("EMUMMC");
+    printf("Mounting EMUMMC...")
+    mmc_connect("EMUMMC")
 }
 if (@BTN_POWER) {
-	exit();
+	exit()
 }
 
-printf("Which partition do you want to dump from? + for SYSTEM - for USER");
-pause();
+printf("Which partition do you want to dump from? + for SYSTEM - for USER")
+pause()
 
 if (@BTN_VOL+) {
-    printf("Mounting SYSTEM...");
-    mmc_mount("SYSTEM");
-    setString("systemSaves", $folder);
+    printf("Mounting SYSTEM...")
+    mmc_mount("SYSTEM")
+    setString("systemSaves", $folder)
 }
 
 if (@BTN_VOL-) {
-    printf("Mounting USER....");
-    mmc_mount("USER");
-    setString("userSaves", $folder);
+    printf("Mounting USER....")
+    mmc_mount("USER")
+    setString("userSaves", $folder)
 }
-combineStrings("sd:/tegraexplorer/", $folder, $path);
-fs_mkdir($path);
-combineStrings("Copying saves to ", $path, $out);
-printf($out);
-printf("");
-fs_copyRecursive("emmc:/save", $path);
-printf("");
-printf("Done, press any button to exit");
-pause();
-exit();
+combineStrings("sd:/tegraexplorer/", $folder, $path)
+fs_mkdir($path)
+combineStrings("Copying saves to ", $path, $out)
+printf($out)
+printf("")
+fs_copyRecursive("emmc:/save", $path)
+printf("")
+printf("Done, press any button to exit")
+pause()
+exit()
