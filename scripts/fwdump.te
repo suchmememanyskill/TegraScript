@@ -85,6 +85,9 @@ setString("9.1.0", $910_version)
 setString("09ef4d92bb47b33861e695ba524a2c17.nca", $920_chk) 
 setString("2416b3794964b3482c7bc506d12c44df.nca", $920_exfat) 
 setString("9.2.0", $920_version) 
+setString("5625cdc21d5f1ca52f6c36ba261505b9.nca", $1000_chk)
+setString("d5bc167565842ee61f9670d23759844d.nca", $1000_exfat)
+setString("10.0.0", $1000_version)
 
 printf("TegraScript firmware dumper") 
 printf("") 
@@ -120,7 +123,7 @@ printf("")
 setString("emmc:/Contents/registered/", $basePath) 
 
 @LOOP = getPosition()
-if (@i, ">=", 88){
+if (@i, ">=", 91){
     printf("No valid firmware version found") 
     printf("Press any button to exit") 
     pause() 
@@ -182,7 +185,14 @@ if (@ISDIRVALID){
 
     combineStrings($sdBasePath, $FILENAME, $sdPath) 
 
-    fs_copy($path, $sdPath) 
+    fs_copy($path, $sdPath)
+	if (@RESULT){
+		printf("")
+		printf("Copy failed!")
+		printInt(@RESULT)
+		pause()
+		exit()
+	}
 
     goto(@LOOP) 
 }
