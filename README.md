@@ -5,7 +5,7 @@ The scripting language of TegraExplorer
 
 Function | Args | Description | Output
 |:-|:-|:-|:-|
-`printf(string arg1)` | arg1: Text to print to the screen | writes text to the screen | returns 0
+`printf(...)` | ...: can be any count of args. Stuff like ("This ", "Is", $Pretty, @Neat) works | writes text to the screen | returns 0
 `printInt(int arg1)` | arg1: Int variable to print | Displays an int variable to the screen in the format `@var: (number)` | returns 0
 `setPrintPos(int arg1, int arg2)` | arg1: sets cursor position x, arg2: sets cursor position y | sets cursor to a position on the screen. Max X is 42, max Y is 78 | returns 0
 `clearscreen()` | - | clears the screen | returns 0
@@ -101,6 +101,11 @@ pause()
 ```
 
 # Changelog
+
+#### 26/04/2020
+With the release of TegraExplorer v1.5.2, there has been 1 new feature implemented.
+
+printf() now can print multiple variables. `printf("This ", "Is", $Pretty, @Neat)` is valid syntax now
 
 #### 12/04/2020
 With the release of TegraExplorer v1.5.1, there has been some breaking changes. `?LOOP` and `goto(?LOOP)` is no longer valid syntax. Replace this with `@LOOP = getLocation()` and `goto(@LOOP)`.
