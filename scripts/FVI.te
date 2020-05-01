@@ -88,6 +88,12 @@ setString("9.2.0", $920_version)
 setString("5625cdc21d5f1ca52f6c36ba261505b9.nca", $1000_chk)
 setString("d5bc167565842ee61f9670d23759844d.nca", $1000_exfat)
 setString("10.0.0", $1000_version)
+setString("36ab1acf0c10a2beb9f7d472685f9a89.nca", $1001_chk)
+setString("d5bc167565842ee61f9670d23759844d.nca", $1001_exfat)
+setString("10.0.1", $1001_version)
+setString("e951bc9dedcd54f65ffd83d4d050f9e0.nca", $1002_chk)
+setString("d5bc167565842ee61f9670d23759844d.nca", $1002_exfat)
+setString("10.0.2", $1002_version)
 
 printf("FVI script edition") 
 printf("") 
@@ -123,7 +129,7 @@ printf("")
 @i = setInt(1) 
 
 @loop = getPosition()
-if (@i, ">=", 91){
+if (@i, ">=", 97){
     printf("No firmware found") 
     printf("Press any button to exit") 
     pause() 

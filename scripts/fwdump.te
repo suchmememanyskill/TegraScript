@@ -88,6 +88,15 @@ setString("9.2.0", $920_version)
 setString("5625cdc21d5f1ca52f6c36ba261505b9.nca", $1000_chk)
 setString("d5bc167565842ee61f9670d23759844d.nca", $1000_exfat)
 setString("10.0.0", $1000_version)
+setString("36ab1acf0c10a2beb9f7d472685f9a89.nca", $1001_chk)
+setString("d5bc167565842ee61f9670d23759844d.nca", $1001_exfat)
+setString("10.0.1", $1001_version)
+setString("e951bc9dedcd54f65ffd83d4d050f9e0.nca", $1002_chk)
+setString("d5bc167565842ee61f9670d23759844d.nca", $1002_exfat)
+setString("10.0.2", $1002_version)
+
+# check tid = 0100000000000809, type data
+# exfat tid = 010000000000081B, type data
 
 printf("TegraScript firmware dumper") 
 printf("") 
@@ -123,32 +132,39 @@ printf("")
 setString("emmc:/Contents/registered/", $basePath) 
 
 @LOOP = getPosition()
-if (@i, ">=", 91){
+if (@i, ">=", 97){
     printf("No valid firmware version found") 
-    printf("Press any button to exit") 
+    printf("Press Power to dump anyway")
+    printf("Press vol+/- to exit") 
     pause() 
-    exit() 
+
+    if (@BTN_POWER, == , 0){
+        exit()
+    }
+    
+    setString("Unknown", $version)
 }
+if (@i, <, 97){
+    setStringIndex(@i, $nca) 
+    combineStrings($basePath, $nca, $path) 
+    @exists = fs_exists($path) 
 
-setStringIndex(@i, $nca) 
-combineStrings($basePath, $nca, $path) 
-@exists = fs_exists($path) 
+    if (@exists, == , 0){
+        @i = math(@i, "+", 3) 
+        goto(@LOOP) 
+    }
 
-if (@exists, == , 0){
-    @i = math(@i, "+", 3) 
-    goto(@LOOP) 
-}
+    @i = math(@i, "+", 1) 
+    setStringIndex(@i, $nca) 
+    combineStrings($basePath, $nca, $path) 
+    @checkexfat = fs_exists($path) 
 
-@i = math(@i, "+", 1) 
-setStringIndex(@i, $nca) 
-combineStrings($basePath, $nca, $path) 
-@checkexfat = fs_exists($path) 
+    @i = math(@i, "+", 1) 
+    setStringIndex(@i, $version) 
 
-@i = math(@i, "+", 1) 
-setStringIndex(@i, $version) 
-
-if (@checkexfat){
-    combineStrings($version, "_exFAT", $version) 
+    if (@checkexfat){
+        combineStrings($version, "_exFAT", $version) 
+    }
 }
 
 printf("Firmware found:") 
@@ -178,7 +194,7 @@ if (@ISDIRVALID){
         combineStrings($basePath, $FILENAME, $path) 
     }
 
-    setPrintPos(0, 15) 
+    setPrintPos(0, 16) 
     printInt(@count) 
     @count = math(@count, "+", 1) 
     printf($FILENAME) 
