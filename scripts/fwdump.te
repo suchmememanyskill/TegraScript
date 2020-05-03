@@ -100,28 +100,32 @@ setString("10.0.2", $1002_version)
 
 printf("TegraScript firmware dumper") 
 printf("") 
-printf("Press vol+ to dump from SYSMMC") 
+printf("Press A to dump from SYSMMC") 
 if (@EMUMMC){
-    printf("Press vol- to dump from EMUMMC") 
+    printf("Press Y to dump from EMUMMC") 
 }
-printf("Press power to exit") 
+printf("Press any other button to exit") 
 printf("") 
 
 pause() 
+@checkInput = setInt(0);
 
-if (@BTN_VOL+){
+if (@BTN_A){
     printf("Mounting SYSMMC...") 
-    mmc_connect("SYSMMC") 
+    mmc_connect("SYSMMC")
+    @checkInput = setInt(1);
 }
-if (@BTN_VOL-){
+if (@BTN_Y){
     if (@EMUMMC, == , 0){
         exit() 
-    } 
+    }
     printf("Mounting EMUMMC...") 
-    mmc_connect("EMUMMC") 
+    mmc_connect("EMUMMC")
+    @checkInput = setInt(1); 
 }
-if (@BTN_POWER){
-    exit() 
+
+if (@checkInput, == , 0){
+    exit()
 }
 
 mmc_mount("SYSTEM") 
@@ -134,11 +138,11 @@ setString("emmc:/Contents/registered/", $basePath)
 @LOOP = getPosition()
 if (@i, ">=", 97){
     printf("No valid firmware version found") 
-    printf("Press Power to dump anyway")
-    printf("Press vol+/- to exit") 
+    printf("Press A to dump anyway")
+    printf("Press any other button to exit") 
     pause() 
 
-    if (@BTN_POWER, == , 0){
+    if (@BTN_A, == , 0){
         exit()
     }
     
@@ -195,9 +199,8 @@ if (@ISDIRVALID){
     }
 
     setPrintPos(0, 16) 
-    printInt(@count) 
     @count = math(@count, "+", 1) 
-    printf($FILENAME) 
+    printf(@count, ": ", $FILENAME) 
 
     combineStrings($sdBasePath, $FILENAME, $sdPath) 
 

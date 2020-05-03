@@ -1,42 +1,54 @@
 printf("TegraScript save dumper")
 printf("What mmc would you like to dump from")
-printf("Press + for sysnand")
+printf("Press A for sysmmc")
 if (@EMUMMC) {
-	printf("Or press - for emummc")
+	printf("Or press Y for emummc")
 }
-printf("Press power to cancel")
+printf("Press any other button to exit")
+pause() 
+@checkInput = setInt(0);
 
-pause()
-
-if (@BTN_VOL+){
-    printf("Mounting SYSMMC...")
+if (@BTN_A){
+    printf("Mounting SYSMMC...") 
     mmc_connect("SYSMMC")
+    @checkInput = setInt(1);
 }
-if (@BTN_VOL-){
+if (@BTN_Y){
     if (@EMUMMC, == , 0){
-        exit()
+        exit() 
     }
-    printf("Mounting EMUMMC...")
+    printf("Mounting EMUMMC...") 
     mmc_connect("EMUMMC")
-}
-if (@BTN_POWER) {
-	exit()
+    @checkInput = setInt(1); 
 }
 
-printf("Which partition do you want to dump from? + for SYSTEM - for USER")
+if (@checkInput, == , 0){
+    exit()
+}
+
+printf("Which partition do you want to dump from? X for SYSTEM, Y for USER")
 pause()
 
-if (@BTN_VOL+) {
+@checkInput = setInt(0);
+
+if (@BTN_X) {
     printf("Mounting SYSTEM...")
     mmc_mount("SYSTEM")
     setString("systemSaves", $folder)
+	@checkInput = setInt(1);
 }
 
-if (@BTN_VOL-) {
+if (@BTN_Y) {
     printf("Mounting USER....")
     mmc_mount("USER")
     setString("userSaves", $folder)
+	@checkInput = setInt(1);
 }
+
+if (@checkInput, == , 0){
+    exit()
+}
+
 combineStrings("sd:/tegraexplorer/", $folder, $path)
 fs_mkdir($path)
 combineStrings("Copying saves to ", $path, $out)

@@ -22,7 +22,7 @@ Function | Args | Description | Output
 `setStringIndex(int in, $svar out)` | looks up earlier defined strings in order. User defined strings start at index 1. $svar is a string variable | Copies string table index to out | returns 0
 `combineStrings(string s1, string s2, $svar out)` | $svar is a string variable | combines s1 and s2 (as s1s2) and copies it into out | returns 0
 `compareStrings(string s1, string s2)` | - | compares s1 to s2. If they are the same, the function returns 1, else 0 | returns 0 or 1
-`pause()` | - | pauses the script until it recieves user input. result will be copied into `@BTN_POWER`, `@BTN_VOL+` and `@BTN_VOL-` | returns >0
+`pause()` | - | pauses the script until it recieves user input. result will be copied into `@BTN_POWER`, `@BTN_VOL+`, `@BTN_VOL-`, `@BTN_A`, `@BTN_B`, `@BTN_X`, `@BTN_Y`, `@BTN_UP`, `@BTN_DOWN`, `@BTN_LEFT` and `@BTN_RIGHT` | returns >0
 `wait(int arg1)` | arg1: amount that it waits | waits for the given amount of time, then continues running the script | returns 0
 `exit()` | - | exits the script | -
 `fs_exists(string path)` | path: full path to file | check if a file exists. 1 if it exists, 0 if it doesn't | returns 0 or 1
@@ -56,13 +56,15 @@ Note though that the int variables can't be assigned negative values
 There are some built in variables:
 - `@EMUMMC`: 1 if an emummc was found, 0 if no emummc was found
 - `@RESULT`: result of the last ran function
-- `@BTN_POWER`, `@BTN_VOL+`, `@BTN_VOL-`: result of the `pause()` function, represents which button got pressed during the `pause()` function
 - `$CURRENTPATH`: Represents the current path
 
 (if `fs_readdir()` got ran)
 - `@ISDIRVALID`: Is the open directory valid
 - `$FILENAME`: Represents the current filename
 - `@ISDIR`: 1 if the last read file is a DIR, otherwise 0
+
+(if `pause()` got ran)
+- `@BTN_POWER`, `@BTN_VOL+`, `@BTN_VOL-`, `@BTN_A`, `@BTN_B`, `@BTN_X`, `@BTN_Y`, `@BTN_UP`, `@BTN_DOWN`, `@BTN_LEFT`: result of the `pause()` function, represents which button got pressed during the `pause()` function
 
 ## Flow control
 
@@ -101,6 +103,11 @@ pause()
 ```
 
 # Changelog
+
+#### 03/05/2020
+*God fucking dammit it's 2am again*
+
+With the release of TegraExplorer v2.0.0, the pause() function changed. It adds some buttons from controllers if they are connected. See the pause() section above to see what buttons are mapped. Note that if no joycons are connected, power = a, up = vol+, down = vol-. Also note that the screen dimentions have changed, so your text might not fit anymore.
 
 #### 26/04/2020
 With the release of TegraExplorer v1.5.2, there has been 1 new feature implemented.

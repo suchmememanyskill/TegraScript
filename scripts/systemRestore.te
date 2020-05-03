@@ -68,19 +68,19 @@ if (@current, "<=", @maxSelection){
 
 pause() 
 
-if (@BTN_VOL-){
+if (@BTN_DOWN){
 	if (@selection, "<", @maxSelection){
 		@selection = math(@selection, "+", 1) 
 	}
 }
 
-if (@BTN_VOL+){
+if (@BTN_UP){
 	if (@selection, ">", 7){
 		@selection = math(@selection, "-", 1) 
 	}
 }
 
-if (@BTN_POWER, "==", 0){
+if (@BTN_A, "==", 0){
 	goto(@optionLoop) 
 }
 
@@ -163,25 +163,22 @@ printf("Ready!")
 setColor("RED") 
 printf("") 
 printf("WARNING!!!") 
-printf("If you do not know exactly what this does") 
-printf("    STOP!") 
+printf("If you do not know exactly what this does. STOP!!!") 
 printf("") 
 printf("This will fuck with your system!") 
-printf("Only do this as") 
-printf("    a last ditch recovery effort!") 
+printf("Only do this as a last ditch recovery effort!") 
 printf("") 
 setColor("GREEN") 
-printf("For help go here:") 
-printf("https://discord.gg/C29hYvh") 
+printf("For help go here: https://discord.gg/C29hYvh") 
 setColor("WHITE") 
 printf("") 
 wait(10) 
-printf("Vol+ to continue") 
-printf("Vol- or power to exit") 
+printf("X to continue") 
+printf("Any other button to exit") 
 
 pause() 
 
-if (@BTN_VOL+, "==", 0){
+if (@BTN_X, "==", 0){
 	exit() 
 }
 
