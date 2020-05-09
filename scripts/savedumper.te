@@ -50,12 +50,19 @@ if (@checkInput, == , 0){
 }
 
 combineStrings("sd:/tegraexplorer/", $folder, $path)
+
+fs_mkdir("sd:/tegraexplorer")
 fs_mkdir($path)
-combineStrings("Copying saves to ", $path, $out)
-printf($out)
+
+printf("Copying saves to ", $out)
 printf("")
-fs_copyRecursive("emmc:/save", $path)
+@check = fs_copyRecursive("emmc:/save", $path)
 printf("")
-printf("Done, press any button to exit")
+if (@check){
+    printf("Something went wrong! Errcode: ", @check)
+}
+if (@check, == , 0){
+   printf("Done, press any button to exit")   
+}
 pause()
 exit()
