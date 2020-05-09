@@ -1,4 +1,5 @@
 printf("TegraScript save dumper")
+printf("")
 printf("What mmc would you like to dump from")
 printf("Press A for sysmmc")
 if (@EMUMMC) {
@@ -26,6 +27,7 @@ if (@checkInput, == , 0){
     exit()
 }
 
+printf("")
 printf("Which partition do you want to dump from? X for SYSTEM, Y for USER")
 pause()
 
@@ -54,7 +56,8 @@ combineStrings("sd:/tegraexplorer/", $folder, $path)
 fs_mkdir("sd:/tegraexplorer")
 fs_mkdir($path)
 
-printf("Copying saves to ", $out)
+printf("")
+printf("Copying saves to ", $path)
 printf("")
 @check = fs_copyRecursive("emmc:/save", $path)
 printf("")
