@@ -13,7 +13,7 @@ Function | Args | Description | Output
 `if(int arg1)` | arg1: checks if interger is true or false (not 0 or 0) | Part of flow control. Runs code inside {} | returns 0
 `if(int arg1, string arg2, int arg3)` (overload) | See `check()` and the first `if()` | Part of flow control. Runs code inside {}. Accepts statements like `if (1, == , 1) {}` | returns 0
 `goto(int location)` | location: interger aquired by `getLocation()` | jumps to the character offset specified | returns 0
-`getLocation()` | - | Returns the current script location, for use with `goto()` | returns > 0
+`getPosition()` | - | Returns the current script location, for use with `goto()` | returns > 0
 `math(int arg1, string arg2, int arg3)` | arg1 "operator arg2" arg3. Valid operators (arg2s): `"+"`, `"-"`, `"*"`, `"/"` | Does a math operation and returns the result | returns the result of the math operation
 `check(int arg1, string arg2, int arg3)` | arg1 "operator arg2" arg3. Valid operators (arg2s): `"=="`, `"!="`, `">="`, `"<="`, `">"`, `"<"` | Does a check and returns the result. result is either 0 or 1 | returns 0 or 1
 `invert(int arg1)` | - | makes non 0 integers a 0, and vise versa | returns 0 or 1
