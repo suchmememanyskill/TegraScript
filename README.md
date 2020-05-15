@@ -115,6 +115,6 @@ With the release of TegraExplorer v1.5.2, there has been 1 new feature implement
 printf() now can print multiple variables. `printf("This ", "Is", $Pretty, @Neat)` is valid syntax now
 
 #### 12/04/2020
-With the release of TegraExplorer v1.5.1, there has been some breaking changes. `?LOOP` and `goto(?LOOP)` is no longer valid syntax. Replace this with `@LOOP = getLocation()` and `goto(@LOOP)`.
+With the release of TegraExplorer v1.5.1, there has been some breaking changes. `?LOOP` and `goto(?LOOP)` is no longer valid syntax. Replace this with `@LOOP = getPosition()` and `goto(@LOOP)`.
 
 Other than this, `@check = check(1, "==", 1) if (@check) {}` can be simplified to `if (1, == , 1) {}`. For `math()` functions, you don't have to enclose operators in "" anymore (just like check/if), like `@math = math(1, + , 1)`
