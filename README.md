@@ -12,7 +12,7 @@ Function | Args | Description | Output
 `setColor(string arg1)` | arg1: color string. Valid args: `RED`, `ORANGE`, `YELLOW`, `GREEN`, `BLUE`, `VIOLET`, `WHITE` | Changes the color of the text printed | returns 0
 `if(int arg1)` | arg1: checks if interger is true or false (not 0 or 0) | Part of flow control. Runs code inside {} | returns 0
 `if(int arg1, string arg2, int arg3)` (overload) | See `check()` and the first `if()` | Part of flow control. Runs code inside {}. Accepts statements like `if (1, == , 1) {}` | returns 0
-`goto(int location)` | location: interger aquired by `getLocation()` | jumps to the character offset specified | returns 0
+`goto(int location)` | location: interger aquired by `getLocation()` | jumps to the character offset specified. sets @RETURN based on current location | returns 0
 `getPosition()` | - | Returns the current script location, for use with `goto()` | returns > 0
 `math(int arg1, string arg2, int arg3)` | arg1 "operator arg2" arg3. Valid operators (arg2s): `"+"`, `"-"`, `"*"`, `"/"` | Does a math operation and returns the result | returns the result of the math operation
 `check(int arg1, string arg2, int arg3)` | arg1 "operator arg2" arg3. Valid operators (arg2s): `"=="`, `"!="`, `">="`, `"<="`, `">"`, `"<"` | Does a check and returns the result. result is either 0 or 1 | returns 0 or 1
@@ -22,6 +22,9 @@ Function | Args | Description | Output
 `setStringIndex(int in, $svar out)` | looks up earlier defined strings in order. User defined strings start at index 1. $svar is a string variable | Copies string table index to out | returns 0
 `combineStrings(string s1, string s2, $svar out)` | $svar is a string variable | combines s1 and s2 (as s1s2) and copies it into out | returns 0
 `compareStrings(string s1, string s2)` | - | compares s1 to s2. If they are the same, the function returns 1, else 0 | returns 0 or 1
+`subString(string in, int startoffset, int size, $svar out)` | in: input string. startoffset: starting offset, 0 is the beginning of the string. size: length to copy, -1 copies the rest of the string. out: output var | Copies part of a string into another string | returns 0
+`inputString(string startText, int maxlen, $svar out)` | startText: Starting input text. maxlen: Maximum allowed characters to enter. out: output var | Displays an input box for the user to input text. Note, only works with joycons attached! | returns 1 if user cancelled the input, 0 if success
+`stringLength(string in)` | - | Gets the length of the input string | returns the length of the input string
 `pause()` | - | pauses the script until it recieves user input. result will be copied into `@BTN_POWER`, `@BTN_VOL+`, `@BTN_VOL-`, `@BTN_A`, `@BTN_B`, `@BTN_X`, `@BTN_Y`, `@BTN_UP`, `@BTN_DOWN`, `@BTN_LEFT` and `@BTN_RIGHT` | returns >0
 `wait(int arg1)` | arg1: amount that it waits | waits for the given amount of time, then continues running the script | returns 0
 `exit()` | - | exits the script | -
@@ -42,9 +45,10 @@ Function | Args | Description | Output
 `mmc_dumpPart(string type, string out)` | type: Either `BOOT` or a partition on the gpt. out: Out folder: for `BOOT` this needs to be a folder, otherwise a filepath | Dumps a part from the e(mu)mmc. Determined by earlier mmc_connect's | returns >= 0
 `mmc_restorePart(string path)` | path: Needs to be `BOOT0`, `BOOT1` or a valid partition on the gpt. FS Partitions are not allowed | Restores a file to the e(mu)mmc. Determined by earlier mmc_connect's | returns >= 0
 
+
 ## Variables
 
-TegraScript has 2 kinds of variables, @ints, $strings.
+TegraScript has 2 kinds of variables, @ints and $strings.
 - You can define @ints by writing `@variable = setInt(0);` (or any function for that matter).
 - You can define $strings with the use of `setString();`, `setStringIndex();` and `combineStrings();`.
 
@@ -56,6 +60,7 @@ Note though that the int variables can't be assigned negative values
 There are some built in variables:
 - `@EMUMMC`: 1 if an emummc was found, 0 if no emummc was found
 - `@RESULT`: result of the last ran function
+- `@JOYCONN`: 1 if both joycons are connected, 0 if not
 - `$CURRENTPATH`: Represents the current path
 
 (if `fs_readdir()` got ran)
@@ -65,6 +70,9 @@ There are some built in variables:
 
 (if `pause()` got ran)
 - `@BTN_POWER`, `@BTN_VOL+`, `@BTN_VOL-`, `@BTN_A`, `@BTN_B`, `@BTN_X`, `@BTN_Y`, `@BTN_UP`, `@BTN_DOWN`, `@BTN_LEFT`: result of the `pause()` function, represents which button got pressed during the `pause()` function
+
+(if `goto()` got ran)
+- `@RETURN`: sets @RETURN based on current location. can be used to go back to (after) the previously ran goto()
 
 ## Flow control
 
@@ -103,6 +111,41 @@ pause()
 ```
 
 # Changelog
+
+#### 29/05/2020
+*It's midnight already? i just got started*
+
+With the release of TegraExplorer v2.0.3, the arg parser has been changed. If you find any bugs, please make an issue in either the TegraExplorer repository, or here.
+
+3 new commands have been added
+- subString()
+- inputString()
+- stringLength()
+
+2 new built in variables has been added
+- @JOYCONN (1 when both joycons are connected, 0 when at least 1 joycon is disconnected)
+- @RETURN (Read on for how this works)
+
+Minus values are now considered valid by the scripting language, but, printing them will not work well (the print function can only print u32's)
+
+Errors have been significantly improved. There are now 2 types of errors, ERR IN FUNC, which indicates a scripting function failed, and SCRIPT LOOKUP FAIL, which means the function you inserted doesn't exist (can also mean the wrong amount of args were supplied). The Loc value on the error screen now shows the line number it failed at, rather than the character offset
+
+Goto functions now generate a variable called @RETURN, which, will return to after the goto. This aids in the making of pseudo-functions. Example:
+
+```
+@functionsActive = setInt(0)
+
+@friiFunction = getPosition()
+if (@functionsActive) {
+    printf("Hi this is a function, i think")
+    goto(@RETURN)
+}
+
+@functionsActive = setInt(1)
+goto(@friiFunction)
+
+pause()
+```
 
 #### 03/05/2020
 *God fucking dammit it's 2am again*
