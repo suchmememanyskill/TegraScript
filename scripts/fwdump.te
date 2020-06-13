@@ -94,6 +94,12 @@ setString("10.0.1", $1001_version)
 setString("e951bc9dedcd54f65ffd83d4d050f9e0.nca", $1002_chk)
 setString("d5bc167565842ee61f9670d23759844d.nca", $1002_exfat)
 setString("10.0.2", $1002_version)
+setString("5b1df84f88c3334335bbb45d8522cbb4.nca", $1003_chk)
+setString("d5bc167565842ee61f9670d23759844d.nca", $1003_exfat)
+setString("10.0.3", $1003_version)
+setString("34728c771299443420820d8ae490ea41.nca", $1004_chk)
+setString("d5bc167565842ee61f9670d23759844d.nca", $1004_exfat)
+setString("10.0.4", $1004_version)
 
 # check tid = 0100000000000809, type data
 # exfat tid = 010000000000081B, type data
@@ -136,7 +142,7 @@ printf("")
 setString("emmc:/Contents/registered/", $basePath) 
 
 @LOOP = getPosition()
-if (@i, ">=", 97){
+if (@i, ">=", 103){
     printf("No valid firmware version found") 
     printf("Press A to dump anyway")
     printf("Press any other button to exit") 
@@ -148,7 +154,7 @@ if (@i, ">=", 97){
     
     setString("Unknown", $version)
 }
-if (@i, <, 97){
+if (@i, <, 103){
     setStringIndex(@i, $nca) 
     combineStrings($basePath, $nca, $path) 
     @exists = fs_exists($path) 
@@ -183,7 +189,7 @@ combineStrings("sd:/tegraexplorer/Firmware/", $version, $sdBasePath)
 fs_mkdir($sdBasePath) 
 combineStrings($sdBasePath, "/", $sdBasePath) 
 
-@count = setInt(1) 
+@count = setInt(0) 
 
 fs_openDir("emmc:/Contents/registered") 
 setColor("GREEN") 
