@@ -1,4 +1,4 @@
-printf("Remove Parental Lock Kronos2308 -.-")
+printf("Remove Parental Lock -.-")
 printf("")
 printf("Press A to remove from SYSMMC")
 if (@EMUMMC){
