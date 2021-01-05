@@ -1,163 +1,217 @@
 # TegraScript
 The scripting language of TegraExplorer
 
-## Functions
+Notice: TegraScript v2 is entirely different than v1. If you still have v1 scripts, you'll have to rewrite them.
 
-Function | Args | Description | Output
-|:-|:-|:-|:-|
-`printf(...)` | ...: can be any count of args. Stuff like ("This ", "Is", $Pretty, @Neat) works | writes text to the screen | returns 0
-`printInt(int arg1)` | arg1: Int variable to print | Displays an int variable to the screen in the format `@var: (number)` | returns 0
-`setPrintPos(int arg1, int arg2)` | arg1: sets cursor position x, arg2: sets cursor position y | sets cursor to a position on the screen. Max X is 42, max Y is 78 | returns 0
-`clearscreen()` | - | clears the screen | returns 0
-`setColor(string arg1)` | arg1: color string. Valid args: `RED`, `ORANGE`, `YELLOW`, `GREEN`, `BLUE`, `VIOLET`, `WHITE` | Changes the color of the text printed | returns 0
-`if(int arg1)` | arg1: checks if interger is true or false (not 0 or 0) | Part of flow control. Runs code inside {} | returns 0
-`if(int arg1, string arg2, int arg3)` (overload) | See `check()` and the first `if()` | Part of flow control. Runs code inside {}. Accepts statements like `if (1, == , 1) {}` | returns 0
-`goto(int location)` | location: interger aquired by `getLocation()` | jumps to the character offset specified. sets @RETURN based on current location | returns 0
-`getPosition()` | - | Returns the current script location, for use with `goto()` | returns > 0
-`math(int arg1, string arg2, int arg3)` | arg1 "operator arg2" arg3. Valid operators (arg2s): `"+"`, `"-"`, `"*"`, `"/"` | Does a math operation and returns the result | returns the result of the math operation
-`check(int arg1, string arg2, int arg3)` | arg1 "operator arg2" arg3. Valid operators (arg2s): `"=="`, `"!="`, `">="`, `"<="`, `">"`, `"<"` | Does a check and returns the result. result is either 0 or 1 | returns 0 or 1
-`invert(int arg1)` | - | makes non 0 integers a 0, and vise versa | returns 0 or 1
-`setInt(int arg1)` | - | returns arg1, for setting of variables | returns arg1
-`setString(string in, $svar out)` | $svar is a string variable, written as `$var` | copies in to out | returns 0
-`setStringIndex(int in, $svar out)` | looks up earlier defined strings in order. User defined strings start at index 1. $svar is a string variable | Copies string table index to out | returns 0
-`combineStrings(string s1, string s2, $svar out)` | $svar is a string variable | combines s1 and s2 (as s1s2) and copies it into out | returns 0
-`compareStrings(string s1, string s2)` | - | compares s1 to s2. If they are the same, the function returns 1, else 0 | returns 0 or 1
-`subString(string in, int startoffset, int size, $svar out)` | in: input string. startoffset: starting offset, 0 is the beginning of the string. size: length to copy, -1 copies the rest of the string. out: output var | Copies part of a string into another string | returns 0
-`inputString(string startText, int maxlen, $svar out)` | startText: Starting input text. maxlen: Maximum allowed characters to enter. out: output var | Displays an input box for the user to input text. Note, only works with joycons attached! | returns 1 if user cancelled the input, 0 if success
-`stringLength(string in)` | - | Gets the length of the input string | returns the length of the input string
-`pause()` | - | pauses the script until it recieves user input. result will be copied into `@BTN_POWER`, `@BTN_VOL+`, `@BTN_VOL-`, `@BTN_A`, `@BTN_B`, `@BTN_X`, `@BTN_Y`, `@BTN_UP`, `@BTN_DOWN`, `@BTN_LEFT` and `@BTN_RIGHT` | returns >0
-`wait(int arg1)` | arg1: amount that it waits | waits for the given amount of time, then continues running the script | returns 0
-`exit()` | - | exits the script | -
-`fs_exists(string path)` | path: full path to file | check if a file exists. 1 if it exists, 0 if it doesn't | returns 0 or 1
-`fs_move(string src, string dst)` | src/dst: full path to file | move file from src to dst | returns >= 0
-`fs_mkdir(string path)` | path: full path to file | creates a directory at the given path (note: returns 8 if the folder already exists | returns >= 0
-`fs_del(string path)` | path: full path to file | deletes a file (or empty directory) | returns >= 0
-`fs_delRecursive(string path)` | path: full path to folder | deletes a folder with all subitems | returns >= 0
-`fs_copy(string src, string dst)` | src/dst: full path to file | copies a file from src to dst | returns >= 0
-`fs_copyRecursive(string src, string dst)` | src/dst: full path to file | copies a folder with subitems from src to dst (note that dst is the parent folder, src will be copied to dst/src) | returns >= 0
-`fs_openDir(string path)` | path: full path to folder | opens a directory for use with `fs_readDir()` and sets `@ISDIRVALID` to 1 | returns >= 0
-`fs_closeDir()` | - | closes current open directory and sets `@ISDIRVALID` to 0 | returns 0
-`fs_readDir()` | - | reads entry out of dir. Atomatically calls `fs_closeDir()` if the end of the dir is reached. Saves result to `$FILENAME` and `@ISDIR` | returns 0
-`fs_combinePath(string left, string right, $var out)` | - | Will combine paths, like `sd:/` and `folder` to `sd:/folder`, also `sd:/folder` and `folder2` to `sd:/folder/folder2` | returns 0
-`fs_extractBisFile(string path, string outfolder)` | - | take .bis and extract it into outfolder | returns >= 0
-`mmc_connect(string mmctype)` | mmctype: either `SYSMMC` or `EMUMMC` | connects SYSMMC or EMUMMC to the system. Specify partition with `mmc_mount()` | returns 0
-`mmc_mount(string partition)` | partition: either `SYSTEM` or `USER` | mounts partition in previously connected mmc | returns >= 0
-`mmc_dumpPart(string type, string out)` | type: Either `BOOT` or a partition on the gpt. out: Out folder: for `BOOT` this needs to be a folder, otherwise a filepath | Dumps a part from the e(mu)mmc. Determined by earlier mmc_connect's | returns >= 0
-`mmc_restorePart(string path)` | path: Needs to be `BOOT0`, `BOOT1` or a valid partition on the gpt. FS Partitions are not allowed | Restores a file to the e(mu)mmc. Determined by earlier mmc_connect's | returns >= 0
+## General Syntax
 
+### Variables
 
-## Variables
+Variables in TegraScript do not need explicit type definitions:
+```
+variable = function(arg1, arg2) # this calls function with 2 arguments: arg1 and arg2, and stores it in variable
+```
 
-TegraScript has 2 kinds of variables, @ints and $strings.
-- You can define @ints by writing `@variable = setInt(0);` (or any function for that matter).
-- You can define $strings with the use of `setString();`, `setStringIndex();` and `combineStrings();`.
+Variables can be of the following types:
+- Integer
+- String
+- Integer Array
+- String Array
+- Byte Array
 
-You can use these variables in place of int or string inputs, so for example `@b = setInt(@a)` or `setString($a, $b)`
+Creating and accessing Array variables goes as follows:
+```
+variable = [1,2,3,4,5] # This creates an integer array and stores it into variable
+function(variable[2]) # This calls function with 1 argument, index 2 of variable, which is 3
+```
 
-Note though that the int variables can't be assigned negative values
+In tegrascript, operations are evaluated from left to right. This is important for math type operations. See the operator section for what type definitions you can put operators against. As a quick primer:
+```
+variable = 2 + 2 * 2 # This puts 8 into variable, as the calculations get evaluated from left to right
+variable = 2 + (2 * 2) # But! we can also use brackets to prioritise calculations
+variable = "a" + "b" # Adding 2 strings together is also a supported operator
+```
+
+Note: Minus integer values are supported this time around
+
+Another note: You can do !variable to flip the integer inside
+
+Every variable in TegraScript v2 is global, thus you can access any variable in any self-defined function
 
 ### Built in variables
-There are some built in variables:
-- `@EMUMMC`: 1 if an emummc was found, 0 if no emummc was found
-- `@RESULT`: result of the last ran function
-- `@JOYCONN`: 1 if both joycons are connected, 0 if not
-- `$CURRENTPATH`: Represents the current path
 
-(if `fs_readdir()` got ran)
-- `@ISDIRVALID`: Is the open directory valid
-- `$FILENAME`: Represents the current filename
-- `@ISDIR`: 1 if the last read file is a DIR, otherwise 0
+TegraScript has 2 built in variables.
+- `_CWD`, which is a string, and represents the current working directory, thus the directory the currently running script is in.
+- `_EMU`, which is an int, and represents if an emummc is present. 1 for present, 0 for not present
 
-(if `pause()` got ran)
-- `@BTN_POWER`, `@BTN_VOL+`, `@BTN_VOL-`, `@BTN_A`, `@BTN_B`, `@BTN_X`, `@BTN_Y`, `@BTN_UP`, `@BTN_DOWN`, `@BTN_LEFT`: result of the `pause()` function, represents which button got pressed during the `pause()` function
+When running `dirRead()` as a function, besides returning a list of filenames, also sets an integer array called `fileProperties` that holds if the representing index of the filenames is a folder or not. 1 for a folder, 0 for a file
 
-(if `goto()` got ran)
-- `@RETURN`: sets @RETURN based on current location. can be used to go back to (after) the previously ran goto()
+### Functions
 
-## Flow control
+TegraScript has support for functions
 
-You can use `if()`, `goto()` and `math()` functions to control the flow of your program. Example:
+Defining and using a function goes as follows:
 ```
-@i = setInt(0)
-@LOOP = getLocation()
-if (@i, <= , 10){
-    @i = math(@i, + , 1)
-    printInt(@i)
-    goto (@LOOP)
+function = { # We are defining a function called function here, with the {}
+    # We put the code we want to run inside the function here
+    var = 1 + 2 + 3
 }
 
-pause()
+function() # after running this, variable will be set to 6
 ```
-This will print numbers 0 to 10 as `@i: x`
 
-Another example:
-
+But you may see an issue: there are no arguments! Fear not, as every variable in TegraScript is global. You can thus solve it with the following syntax:
 ```
-printf("Press a button")
-
-pause()
-
-if (@BTN_VOL+){
-    printf("Vol+ has been pressed")
-}
-if (@BTN_VOL-){
-    printf("Vol- has been pressed")
-}
-if (@BTN_POWER){
-    printf("Power has been pressed")
+function = {
+    b = a * 2 # We want to multiply a by 2 and put it into b, but how do we define a?
 }
 
-pause()
+function(a = 10) # Ah! We can just define it in the function args
+
+a = 20
+function() # Or if you prefer, you can define it normally as well
 ```
+
+### Flow control
+
+TegraScript has the following functions for flow control: `if()`, `else()`, `while()`, `return()`, `exit()`
+
+- `if()` checks it's first arg, if it's 1, it runs the next {}, otherwise it skips over it
+- `else()` checks if the last statement was an if, and if that if skipped, we run the next {}
+- `while()` checks it's first arg, if it's 1, it runs the next {}, and jumps back to the while
+- `return()` exits the current running function, if there is one
+- `exit()` exits the script entirely
+
+Lets try to build a loop that iterates 30 times, and printing even numbers
+```
+i = 0
+while (i < 30){ # check if i is below 30, if so, run the code between the brackets
+    if (i % 2 == 0){ # is i dividable by 2?
+        println(i)
+    }
+
+    i = i + 1 # don't forget the + 1 of i! otherwise an infinite loop will haunt you
+}
+```
+
+## Operators
+
+### Integer, Integer
+Operator | Output
+|:-|:-|
+`+` | sum of both integers
+`-` | integer minus integer
+`*` | multiplication of both integers
+`/` | integer divided by integer
+`%` | integer division remainder (modulo) of integer
+`<` | 1 if left is smaller, otherwise 0
+`>` | 1 if left is bigger, otherwise 0
+`<=`| 1 if left is smaller or equal, otherwise 0
+`>=`| 1 if left is bigger or equal, otherwise 0
+`==`| 1 if left and right are equal, otherwise 0
+`!=`| 1 if left and right are not equal, otherwise 0
+`&&`| 1 if left and right are non 0, otherwise 0. Also if output is 0, disregards rest of statement
+`\|\|`| 1 if left or right are non 0, otherwise 0. Also if output is 1, disregards rest of statement
+`&` | Binary operator. ANDs both integers together
+`\|` | Binary operator. ORs both integers together
+`<<`| Binary operator. Bitshifts the left integer to the left by right integer's amount
+`>>`| Binary operator. Bitshifts the left integer to the right by right integer's amount
+
+### String, String
+Operator | Output
+|:-|:-|
+`+` | Adds both strings together
+`==`| 1 if strings are equal, otherwise 0
+`-` | Removes the end of the first string if the second string matches the end of the first. (Example: `"abcdef" - "def"` is `"abc"`)
+`/` | Splits the left string based on the right string. Returns a string array
+
+### (Integer Array, Byte Array), Integer
+Operator | Output
+|:-|:-|
+`+` | Adds the right integer into the left array
+`-` | Removes right integer amount of entries from the left array
+`:` | Removes right integer amount of entries from the beginning of the left array
+
+### String, Integer
+Operator | Output
+|:-|:-|
+`-` | Removes right integer amount of characters from the left string
+`:` | Removes right integer amount of character from the beginning of the left string
+
+## Functions
+
+### Flow control functions
+Name | Description | OutType
+|:-|:-|:-|
+`if(int arg)`       | Runs the next {} if arg is non zero | None 
+`else()`            | Runs the next {} if the last statement was an if that skipped their {} | None
+`while(int arg)`    | Runs the next {} if arg is non zero. Jumps to the if after exiting the {} | None
+`return()`          | Breaks out of a function | None
+`exit()`            | Exits the current script | None
+
+### Utilities
+Name | Description | OutType
+|:-|:-|:-|
+`print(...)`         | Prints all args provided to the screen. Can print Integer, String, IntegerArray. `\r` and `\n` is supported | None
+`println(...)`       | Same as `print(...)` but puts a newline at the end | None
+`color(string color)`| Sets the print color. Supported inputs: `"RED"`, `"ORANGE"`, `"YELLOW"`, `"GREEN"`, `"BLUE"`, `"VIOLET"`, `"WHITE"` | None
+`len(var arg1)`      | Gets the length of a string or an array | Integer
+`byte(IntegerArray arg1)`| Converts an integer array to a byte one | ByteArray
+`bytesToStr(ByteArray arg1)`| Converts a byte array to a string | String
+`printPos(int x, int y)` | Sets the printing position on screen. X/Y are in whole character sizes (16x16) | None
+`clearscreen()`      | Clears the screen full of your nonsense | None
+`drawBox(int x1, int y1, int x2, int y2, int color)` | Draws a box from x1/y1 to x2/y2 with the color as color (raw: 0x00RRGGBB) | None
+`wait(int ms)`       | Waits for ms amount | None
+`pause()`            | Pauses until controller input is detected. Returns the controller input as raw u32 bitfield | Integer
+`version()`          | Returns an Integer array of the current TE version | IntegerArray
+`menu(StringArray options, int startPos)` | Makes a menu with the cursor at startPos, with the provided options. Returns the current pos when a is pressed. B always returns 0 | Integer
+`menu(StringArray options, int startPos, StringArray colors)` | Same as above, but the entries now get colors defined by the colors array. Uses the same colors as the `colors()` function | Integer
+
+Note about `pause()`. You need to work with raw bitfields. Have an example
+```
+# The most common controls
+JoyY = 0x1
+JoyX = 0x2
+JoyB = 0x4
+JoyA = 0x8
+
+LeftJoyDown = 0x10000
+LeftJoyUp = 0x20000
+LeftJoyRight = 0x40000
+LeftJoyLeft = 0x80000
+
+if (pause() & JoyX){
+    println("X has been pressed!")
+}
+```
+
+### FileSystem functions
+Name | Description | OutType
+|:-|:-|:-|
+`fileRead(string path)`     | Reads the file at the given path and returns it's contents in a byte array | ByteArray
+`fileWrite(string path, ByteArray data)` | Writes data to the given path. Returns non zero on error | Integer
+`fileExists(string path)`   | Checks if a file or folder exists at the given path. 1 if yes, otherwise 0 | Integer
+`fileMove(string src, string dst)` | Moves a file from src to dst. Returns non zero on error | Integer
+`fileCopy(string src, string dst)` | Copies a file from src to dst. Returns non zero on error | Integer
+`fileDel(string path)`      | Deletes the file located at path. Returns non zero on error | Integer
+`pathCombine(...)`          | Needs 2+ string args as input. Combines them into a path. First entry must be the source folder Example: `pathCombine("sd:/", "tegraexplorer")` -> `"sd:/tegraexplorer"` | String
+`pathEscFolder(string path)`| Escapes a folder path. Example: `pathEscFolder("sd:/tegraexplorer")` -> `"sd:/"` | String
+`dirRead(string path)`      | Reads a folder and returns a StringArray of filenames. Also creates an IntegerArray called `fileProperties` that is the same length as the filenames, and is non zero if the index of the filename is a folder | StringArray
+`dirCopy(string src, string dst)`| Copies a folder from src to dst. Dst needs to be the containing folder of where you want src to go (`"sd:/tegraexplorer", "sd:/backup` -> `"sd:/backup/tegraexplorer"`). Returns non zero on error | Integer
+`dirDel(string path)`       | Deletes the dir located at path. Returns non zero on error | Integer
+`mkdir(string path)`        | Makes a directory at path | Integer
+
+### Storage functions !! Dangerous
+Name | Description | OutType
+|:-|:-|:-|
+`mmcConnect(string loc)` | Loc can be `"SYSMMC"` or `"EMUMMC"`. Returns non zero on error | Integer
+`mmcMount(string loc)`   | Loc can be `"PRODINFOF"`, `"SAFE"`, `"SYSTEM"` and `"USER"`. Mounts the filesystem to the prefix `bis:/`. Returns non zero on error | Integer
+`mmcDump(string path, string target)`| Dumps target to path. target can be anything in the EMMC menu in TE. Returns non zero on error | Integer
+`mmcRestore(string path, string target, int force)`| Restores path to target. target can be anything in the EMMC menu in TE. Force forces smaller files to flash anyway. Returns non zero on error | Integer
+`ncaGetType(string path)`| Returns the type of nca that is in path. Make sure you provide an nca and nothing else! Useful for differentiating between Meta and Non-Meta Nca's | Integer
+`saveSign(string path)`  | Signs the (system) save at the given location. Make sure you provide a save and nothing else! Returns non zero on error | Integer
 
 # Changelog
+5/1/2021 @ 1:32am // Sleep is still a lie
 
-#### 29/05/2020
-*It's midnight already? i just got started*
-
-With the release of TegraExplorer v2.0.3, the arg parser has been changed. If you find any bugs, please make an issue in either the TegraExplorer repository, or here.
-
-3 new commands have been added
-- subString()
-- inputString()
-- stringLength()
-
-2 new built in variables has been added
-- @JOYCONN (1 when both joycons are connected, 0 when at least 1 joycon is disconnected)
-- @RETURN (Read on for how this works)
-
-Minus values are now considered valid by the scripting language, but, printing them will not work well (the print function can only print u32's)
-
-Errors have been significantly improved. There are now 2 types of errors, ERR IN FUNC, which indicates a scripting function failed, and SCRIPT LOOKUP FAIL, which means the function you inserted doesn't exist (can also mean the wrong amount of args were supplied). The Loc value on the error screen now shows the line number it failed at, rather than the character offset
-
-Goto functions now generate a variable called @RETURN, which, will return to after the goto. This aids in the making of pseudo-functions. Example:
-
-```
-@functionsActive = setInt(0)
-
-@friiFunction = getPosition()
-if (@functionsActive) {
-    printf("Hi this is a function, i think")
-    goto(@RETURN)
-}
-
-@functionsActive = setInt(1)
-goto(@friiFunction)
-
-pause()
-```
-
-#### 03/05/2020
-*God fucking dammit it's 2am again*
-
-With the release of TegraExplorer v2.0.0, the pause() function changed. It adds some buttons from controllers if they are connected. See the pause() section above to see what buttons are mapped. Note that if no joycons are connected, power = a, up = vol+, down = vol-. Also note that the screen dimentions have changed, so your text might not fit anymore.
-
-#### 26/04/2020
-With the release of TegraExplorer v1.5.2, there has been 1 new feature implemented.
-
-printf() now can print multiple variables. `printf("This ", "Is", $Pretty, @Neat)` is valid syntax now
-
-#### 12/04/2020
-With the release of TegraExplorer v1.5.1, there has been some breaking changes. `?LOOP` and `goto(?LOOP)` is no longer valid syntax. Replace this with `@LOOP = getPosition()` and `goto(@LOOP)`.
-
-Other than this, `@check = check(1, "==", 1) if (@check) {}` can be simplified to `if (1, == , 1) {}`. For `math()` functions, you don't have to enclose operators in "" anymore (just like check/if), like `@math = math(1, + , 1)`
+Initial writeup on TScript v2
