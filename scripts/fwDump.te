@@ -76,6 +76,7 @@ if (!button){
 	exit()
 }
 
+start = timerMs()
 println("Starting dump...\n")
 color("GREEN")
 
@@ -112,5 +113,5 @@ while (i < filesLen){
 }
 
 color("WHITE")
-println("\n\nDone!")
+println("\n\nDone! took ", (timerMs() - start) / 1000, "s")
 pause()
