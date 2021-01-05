@@ -111,9 +111,9 @@ Operator | Output
 `==`| 1 if left and right are equal, otherwise 0
 `!=`| 1 if left and right are not equal, otherwise 0
 `&&`| 1 if left and right are non 0, otherwise 0. Also if output is 0, disregards rest of statement
-`||`| 1 if left or right are non 0, otherwise 0. Also if output is 1, disregards rest of statement
+`\|\|`| 1 if left or right are non 0, otherwise 0. Also if output is 1, disregards rest of statement
 `&` | Binary operator. ANDs both integers together
-`|` | Binary operator. ORs both integers together
+`\|` | Binary operator. ORs both integers together
 `<<`| Binary operator. Bitshifts the left integer to the left by right integer's amount
 `>>`| Binary operator. Bitshifts the left integer to the right by right integer's amount
 
