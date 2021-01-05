@@ -7,7 +7,7 @@ Notice: TegraScript v2 is entirely different than v1. If you still have v1 scrip
 
 ### Variables
 
-Variables in TegraScript do not need explicit type defenitions:
+Variables in TegraScript do not need explicit type definitions:
 ```
 variable = function(arg1, arg2) # this calls function with 2 arguments: arg1 and arg2, and stores it in variable
 ```
@@ -204,10 +204,10 @@ Name | Description | OutType
 ### Storage functions !! Dangerous
 Name | Description | OutType
 |:-|:-|:-|
-`mmcConnect(string loc)` | loc can be `"SYSMMC"` or `"EMUMMC"`. Returns non zero on error | Integer
-`mmcMount(string loc)`   | loc can be `"PRODINFOF"`, `"SAFE"`, `"SYSTEM"` and `"USER"`. Mounts the filesystem to the prefix `bis:/`. Returns non zero on error | Integer
-`mmcDump(string path, string target)`| dumps target to path. target can be anything in the EMMC menu in TE. Returns non zero on error | Integer
-`mmcRestore(string path, string target, int force)`| restores path to target. target can be anything in the EMMC menu in TE. Force forces smaller files to flash anyway. Returns non zero on error | Integer
+`mmcConnect(string loc)` | Loc can be `"SYSMMC"` or `"EMUMMC"`. Returns non zero on error | Integer
+`mmcMount(string loc)`   | Loc can be `"PRODINFOF"`, `"SAFE"`, `"SYSTEM"` and `"USER"`. Mounts the filesystem to the prefix `bis:/`. Returns non zero on error | Integer
+`mmcDump(string path, string target)`| Dumps target to path. target can be anything in the EMMC menu in TE. Returns non zero on error | Integer
+`mmcRestore(string path, string target, int force)`| Restores path to target. target can be anything in the EMMC menu in TE. Force forces smaller files to flash anyway. Returns non zero on error | Integer
 `ncaGetType(string path)`| Returns the type of nca that is in path. Make sure you provide an nca and nothing else! Useful for differentiating between Meta and Non-Meta Nca's | Integer
 `saveSign(string path)`  | Signs the (system) save at the given location. Make sure you provide a save and nothing else! Returns non zero on error | Integer
 
