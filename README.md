@@ -25,7 +25,7 @@ variable = [1,2,3,4,5] # This creates an integer array and stores it into variab
 function(variable[2]) # This calls function with 1 argument, index 2 of variable, which is 3
 ```
 
-In tegrascript, operations are evaluated from left to right. This is important for math type operations. See the operator section for what type defenitions you can put operators against. As a quick primer:
+In tegrascript, operations are evaluated from left to right. This is important for math type operations. See the operator section for what type definitions you can put operators against. As a quick primer:
 ```
 variable = 2 + 2 * 2 # This puts 8 into variable, as the calculations get evaluated from left to right
 variable = 2 + (2 * 2) # But! we can also use brackets to prioritise calculations
