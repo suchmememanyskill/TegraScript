@@ -1,0 +1,273 @@
+readNext = {
+    next = all - (len(all) - readAmount)
+    all = all : readAmount
+}
+
+getInt = {
+	resInt = (next[0] << 24) | (next[1] << 16) | (next[2] << 8) | (next[3])
+}
+
+getNextInt = {
+	readAmount = 4
+	readNext()
+	getInt()
+}
+
+extractBis = {
+	path = pathCombine(_CWD, "boot.bis")
+	all = fileRead(path)
+	readAmount = 0x10
+	readNext()
+
+	bisver = bytesToStr(next)
+
+	readAmount = 1
+	readNext()
+	# println(next[0])
+
+	sizes = [0, 0, 0, 0]
+	files = ["BOOT0.bin", "BOOT1.bin", "BCPKG2-1-Normal-Main", "BCPKG2-3-SafeMode-Main"]
+
+	i = 0
+	while (i < 4) {
+		getNextInt()
+		sizes[i] = resInt
+		i = i + 1
+	}
+
+	# println(sizes)
+
+	i = 0
+	while (i < 4) {
+		readAmount = sizes[i]
+		readNext()
+		res = fileWrite(pathCombine(_CWD, files[i]), next))
+		if (res){
+			return()
+		}
+		i = i + 1
+	}
+	
+	res = fileCopy(pathCombine(_CWD, "BCPKG2-1-Normal-Main"), pathCombine(_CWD, "BCPKG2-2-Normal-Sub"))
+	if (!res){
+		res = fileCopy(pathCombine(_CWD, "BCPKG2-3-SafeMode-Main"), pathCombine(_CWD, "BCPKG2-4-SafeMode-Sub"))
+	}
+}
+
+restoreBis = {
+	toRestoreFiles = ["BOOT0.bin", "BOOT1.bin", "BCPKG2-1-Normal-Main", "BCPKG2-2-Normal-Sub", "BCPKG2-3-SafeMode-Main", "BCPKG2-4-SafeMode-Sub"]
+	i = 0
+	color("GREEN")
+	while (i < len(toRestoreFiles)){
+		print("Restoring ", toRestoreFiles[i], "... ")
+		res = mmcRestore(pathCombine(_CWD, toRestoreFiles[i]), toRestoreFiles[i], 1)
+		if (res){
+			color("RED")
+			print("An error occured! ", res)
+			return()
+		}
+		println()
+		i = i + 1
+	}
+	color("WHITE")
+}
+
+restoreSystem = {	
+	color("RED")
+	print("Deleting SYSTEM contents... ")
+	if (dirDel("bis:/Contents/registered")){
+		println("\nAn error occured during deletion!")
+		return()
+	}
+	println()
+	
+	color("GREEN")
+	print("Copying registered... ")
+	if (dirCopy(pathCombine(_CWD, "SYSTEM/Contents/registered"), "bis:/Contents")) {
+		println("\nAn error occured during copying!")
+		return()
+	}
+	println()
+	
+	color("BLUE")
+	print("Copying 120 save...")
+	if (fileCopy(pathCombine(_CWD, "SYSTEM/save/8000000000000120"), "bis:/save/8000000000000120")) {
+		println("\nFailed to copy system save")
+	}
+	println()
+	
+	color("WHITE")
+}
+
+signSave = {
+	print("Signing 120 save... ")
+	if (saveSign("bis:/save/8000000000000120")){
+		println("\nSave sign failed!")
+		pause()
+		exit()
+	}
+	else(){
+		println("Done!")
+	}
+}
+
+
+
+origOptions = ["Boot", "System", "Save Sign"]
+SystemRestore = 1
+BisRestore = 1
+SaveSign = 0
+
+menuOptions = ["Exit", "\n-- Options: --", "Boot.bis not found...", "SYSTEM dir not found...", "", "\n-- Restore to --", "SYSMMC", "EMUMMC"]
+menuColors = ["WHITE", "VIOLET", "BLUE", "BLUE", "BLUE", "VIOLET", "YELLOW", "YELLOW"]
+menuBits = [0, 1, 1, 1, 0, 1, 0, 0]
+
+setMenuOptions = {	
+	if (!menuBits[2]) {
+		if (BisRestore){
+			menuOptions[2] = origOptions[0] + ": ON"
+		}
+		else() {
+			menuOptions[2] = origOptions[0] + ": OFF"
+		}
+	}
+
+	if (!menuBits[3]) {
+		if (SystemRestore){
+			menuOptions[3] = origOptions[1] + ": ON"
+		}
+		else() {
+			menuOptions[3] = origOptions[1] + ": OFF"
+		}
+	}
+	
+	if (SaveSign){
+		menuOptions[4] = origOptions[2] + ": ON"
+	}
+	else() {
+		menuOptions[4] = origOptions[2] + ": OFF"
+	}
+}
+
+if (!fileExists(pathCombine(_CWD, "boot.bis"))) {
+	println("[WARN] boot.bis not found!")
+	BisRestore = 0
+}
+else() {
+	menuBits[2] = 0
+}
+
+if (!fileExists(pathCombine(_CWD, "SYSTEM"))) {
+	println("[WARN] SYSTEM dir not found!")
+	SystemRestore = 0
+}
+else() {
+	menuBits[3] = 0
+}
+
+if (_EMU){
+	menuBits[7] = 0
+}
+else() {
+	menuBits[7] = 2
+}
+
+
+println("\n-- System Restore Script --\n\n")
+
+res = 0
+while (res < 6){
+	printPos(0, 5)
+	setMenuOptions()
+	res = menu(menuOptions, res, menuColors, menuBits)
+	
+	if (res == 0){
+		exit()
+	}
+	
+	if (res == 2){
+		BisRestore = !BisRestore
+	}
+	
+	if (res == 3){
+		SystemRestore = !SystemRestore
+	}
+	
+	if (res == 4){
+		SaveSign = !SaveSign
+	}
+}
+
+clearscreen()
+
+if (res == 6){
+	println("Mounting SYS")
+	if (mmcConnect("SYSMMC")){
+		println("An error occured during mmc connect!")
+		pause()
+		exit()
+	}
+}
+
+if (res == 7){
+	println("Mounting EMU")
+	if (mmcConnect("EMUMMC")){
+		println("An error occured during mmc connect!")
+		pause()
+		exit()
+	}
+}
+
+if (BisRestore){
+	print("Extracting bis...  ")
+	extractBis()
+	if (res){
+		println("\nError while extracting bis...")
+		pause()
+		exit()
+	}
+	else(){
+		println(" Done!\nExtracted version: ", bisver)
+	}
+}
+
+
+println("\n\nReady!\n")
+
+color("RED") 
+print("WARNING!!!\nIf you do not know exactly what this does. STOP!!!\nThis will fuck with your system!\nOnly do this as a last ditch recovery effort!\n") 
+color("GREEN") 
+println("For help go here: https://discord.gg/C29hYvh\n") 
+color("WHITE") 
+wait(10000) 
+println("X to continue    \nAny other button to exit") 
+
+if (!(pause() & 0x2)){
+	exit()
+}
+
+clearscreen()
+println("GO!\n")
+
+if (BisRestore){
+	restoreBis()
+}
+
+println()
+
+if (mmcMount("SYSTEM")){
+	println("Failed to mount system!")
+	pause()
+	exit()
+}
+
+if (SystemRestore){
+	restoreSystem()
+}
+
+if (SaveSign) {
+	signSave()
+}
+
+println("\n\nDone!\nPress any button to exit")
+pause()

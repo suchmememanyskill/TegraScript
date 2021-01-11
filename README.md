@@ -18,6 +18,7 @@ Variables can be of the following types:
 - Integer Array
 - String Array
 - Byte Array
+- Empty Array 
 
 Creating and accessing Array variables goes as follows:
 ```
@@ -35,6 +36,8 @@ variable = "a" + "b" # Adding 2 strings together is also a supported operator
 Note: Minus integer values are supported this time around
 
 Another note: You can do !variable to flip the integer inside
+
+Another another note: Every object in TScript is not a reference type! every time you try to modify an array it re-makes the array. In practise array operations are slow
 
 Every variable in TegraScript v2 is global, thus you can access any variable in any self-defined function
 
@@ -82,7 +85,7 @@ TegraScript has the following functions for flow control: `if()`, `else()`, `whi
 - `return()` exits the current running function, if there is one
 - `exit()` exits the script entirely
 
-Lets try to build a loop that iterates 30 times, and printing even numbers
+Let's try to build a loop that iterates 30 times, and printing even numbers
 ```
 i = 0
 while (i < 30){ # check if i is below 30, if so, run the code between the brackets
@@ -138,6 +141,16 @@ Operator | Output
 `-` | Removes right integer amount of characters from the left string
 `:` | Removes right integer amount of character from the beginning of the left string
 
+### StringArray, String
+Operator | Output
+|:-|:-|
+`+` | Adds a string to an array
+
+### EmptyArray, (String, Int)
+Operator | Output
+|:-|:-|
+`+` | Creates the array of the right type and puts the given value as the first entry
+
 ## Functions
 
 ### Flow control functions
@@ -166,6 +179,7 @@ Name | Description | OutType
 `version()`          | Returns an Integer array of the current TE version | IntegerArray
 `menu(StringArray options, int startPos)` | Makes a menu with the cursor at startPos, with the provided options. Returns the current pos when a is pressed. B always returns 0 | Integer
 `menu(StringArray options, int startPos, StringArray colors)` | Same as above, but the entries now get colors defined by the colors array. Uses the same colors as the `colors()` function | Integer
+`menu(StringArray options, int startPos, StringArray colors, IntegerArray modifier)` | Same as above, but entries can be hidden or skipped defined by the modifier array. 0 for normal, 1 for skip, 2 for hide | Integer
 
 Note about `pause()`. You need to work with raw bitfields. Have an example
 ```
@@ -200,6 +214,7 @@ Name | Description | OutType
 `dirCopy(string src, string dst)`| Copies a folder from src to dst. Dst needs to be the containing folder of where you want src to go (`"sd:/tegraexplorer", "sd:/backup` -> `"sd:/backup/tegraexplorer"`). Returns non zero on error | Integer
 `dirDel(string path)`       | Deletes the dir located at path. Returns non zero on error | Integer
 `mkdir(string path)`        | Makes a directory at path | Integer
+`launchPayload(string path)`| Launches the payload at the given path. Returns non zero on error | Integer
 
 ### Storage functions !! Dangerous
 Name | Description | OutType
@@ -212,6 +227,17 @@ Name | Description | OutType
 `saveSign(string path)`  | Signs the (system) save at the given location. Make sure you provide a save and nothing else! Returns non zero on error | Integer
 
 # Changelog
-5/1/2021 @ 1:32am // Sleep is still a lie
+### 11/1/2021 @ 22:10 // Wow it isn't 2am for once!
 
-Initial writeup on TScript v2
+For the release of TE 3.0.1, the following changes were made:
+- A new type was added: Empty array type. You can get this type by running `var = []`
+- Operators were added for StringArray, String and EmptyArray, (String, Integer)
+- launchPayload was added as a function
+- Menu now allows for an additional integer array to define hidden or skip flags
+- A bug was fixed with <= and >= registering as < and >
+- fileCopy's should not leave an ugly [ anymore
+- A script now get executed at TE bootup if a script called `startup.te` is found on the root of the SD
+
+### 5/1/2021 @ 1:32am // Sleep is still a lie
+
+- Initial writeup on TScript v2
