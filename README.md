@@ -3,6 +3,13 @@ The scripting language of TegraExplorer
 
 Notice: TegraScript v2 is entirely different than v1. If you still have v1 scripts, you'll have to rewrite them.
 
+Included in this repository: (click the link, right click > `save as` to save the script)
+- [fwdump.te](https://raw.githubusercontent.com/suchmememanyskill/TegraScript/master/scripts/fwDump.te) dumps the firmware with the actual firmware version as it's name
+- [systemRestore.te](https://raw.githubusercontent.com/suchmememanyskill/TegraScript/master/scripts/systemRestore.te) restores the output of [emmchaccgen](https://github.com/suchmememanyskill/EmmcHaccGen). Place the generated boot.bis and SYSTEM directory next to this script
+- [systemwipe.te](https://github.com/suchmememanyskill/TegraScript/blob/master/scripts/systemwipe.te) is essentially a 'factory reset'. This will wipe everything off the switch and make it boot up like it was fresh out of the box. Error (eprt) reports are kept, so this is not safe to use with sxos. 
+
+Any of this scripts can be ran by putting them on the sd, then inside tegraexplorer navigating to the sd, selecting the file and running it.
+
 ## General Syntax
 
 ### Variables
