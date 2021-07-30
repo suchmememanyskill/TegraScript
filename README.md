@@ -226,8 +226,8 @@ You can initiate a save class by using `readsave("path/to/save")`. This uses a l
 | cwd | - | - | String | Returns the current working directory. Returns 'sd:/' if ran from builtin script | print(cwd()) |
 | clear | - | - | None | Clears the screen and resets the cursor to the top left | clear() |
 | timer | - | - | Integer | Get the current system time in ms | a = timer() println("Very intensive operation") print("Time taken:", timer() - a) |
-| pause | - | - | Dictionary (a,b,x,y,down,up,right,left,power,volplus,volminus,raw) | Waits for user input, then returns a dictionary of what was pressed | p = pause() if (p.a) { println("A was pressed!") } |
-| pause | Integer | 0: Bitmask | Dictionary (a,b,x,y,down,up,right,left,power,volplus,volminus,raw) | Same as argless pause() but you can provide your own bitmask. See source/hid/hid.h | pause(0xC) # Waits until either A or B is pressed |
+| pause | - | - | Dictionary (a, b, x, y, down, up, right, left, power, volplus, volminus, raw) | Waits for user input, then returns a dictionary of what was pressed | p = pause() if (p.a) { println("A was pressed!") } |
+| pause | Integer | 0: Bitmask | Dictionary (a, b, x, y, down, up, right, left, power, volplus, volminus, raw) | Same as argless pause() but you can provide your own bitmask. See source/hid/hid.h | pause(0xC) # Waits until either A or B is pressed |
 | color | Integer | 0: Hex color (0xRRGGBB) | None | Sets the text color | color(0x00FF00) print("Green text!") |
 | menu | StringArray, Interger | 0: Menu options, 1: Starting position | Integer | Makes a menu of the strings in the array. Returns the index of what was pressed. Pressing b always returns 0 | idx = menu(["1", "2", "3"], 0) println(idx, "was pressed!") |
 | menu | StringArray, Integer, IntegerArray | 0: Menu options, 1: Starting position, 2: Color/Options array | Integer | Makes a menu. The lower 3 bytes of the 3rd argument is RGB (0xRRGGBB). The upper byte is a bitfield with: 0x1: skip, 0x2: hide, 0x4: fileIcon, 0x8: folderIcon | menu(["1", "2"], 0, [0xFF0000, 0x00FF00]) |
