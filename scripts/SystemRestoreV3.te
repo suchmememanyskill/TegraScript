@@ -1,0 +1,309 @@
+#REQUIRE VER 4.0.0
+#REQUIRE MINERVA
+#REQUIRE KEYS
+#REQUIRE SD
+
+wait={t=timer()while(timer()<(t+tw)){print("Wait for",(t+tw-timer()/1000),"seconds \r")}}
+p = println
+
+getInt = {
+	resInt = (buff[0] << 24) | (buff[1] << 16) | (buff[2] << 8) | (buff[3])
+}
+bisFileOffset = 0
+
+getBisBytes = {
+	buff = bisFileDump.slice(bisFileOffset, bisGetLen).project()
+	bisFileOffset = bisFileOffset + bisGetLen
+}
+
+getNextInt = {
+	getBisBytes(bisGetLen = 4)
+	getInt()
+}
+
+fatal = {
+	color(0xFF0000)
+	p("\n[FATAL]", fatalMsg)
+	pause()
+	exit()
+}
+
+readBisAttrs = {
+	path = combinepath(cwd(), "boot.bis")
+	bisFileRes = 1
+	if (fsexists(path)){
+		bisFileDump = readfile(path)
+		getBisBytes(bisGetLen = 0x10)
+		bisName = buff.bytestostr()
+		getBisBytes(bisGetLen = 1)
+		
+		sizes = [0,1,2,3].copy()
+		
+		sizes.foreach("x"){
+			getNextInt()
+			sizes[x] = resInt
+		}
+		
+		bisFileRes = 0
+	}
+}
+
+extractBis = {
+	color(0xFF0000)
+	p("Extracting boot.bis...")
+	color(0xFFFFFF)
+	i = 0
+	files = ["BOOT0.bin", "BOOT1.bin", "BCPKG2-1-Normal-Main", "BCPKG2-3-SafeMode-Main"]
+	
+	sizes.foreach("x"){
+		getBisBytes(bisGetLen = x)
+		p("Extracting", files[i])
+		if (writefile(combinepath(cwd(), files[i]), buff)){
+			fatal(fatalMsg = "Extracting boot.bis failed!")
+		}
+	
+		i = i + 1
+	}
+	
+	res = copyfile(combinepath(cwd(), "BCPKG2-1-Normal-Main"), combinepath(cwd(), "BCPKG2-2-Normal-Sub"))
+	if (!res){
+		res = copyfile(combinepath(cwd(), "BCPKG2-3-SafeMode-Main"), combinepath(cwd(), "BCPKG2-4-SafeMode-Sub"))
+	}
+	
+	if (res) {
+		fatal(fatalMsg = "Extracting boot.bis failed!")
+	}
+	
+	p("\n")
+}
+
+bisFiles = ["BOOT0.bin", "BOOT1.bin", "BCPKG2-1-Normal-Main", "BCPKG2-2-Normal-Sub", "BCPKG2-3-SafeMode-Main", "BCPKG2-4-SafeMode-Sub", "PRODINFO"] 
+
+backupBis = {
+	color(0xFF0000)
+	p("Backing up BIS...")
+	color(0xFFFFFF)
+	
+	mkdir(combinepath(cwd(), "backup"))
+	path = combinepath(cwd(), "backup", "bis")
+	mkdir(path)
+	bisFiles.foreach("x"){
+		print("Backing up", x, "")
+		if (mmcread(combinepath(path, x), x)){
+			fatal(fatalMsg = "Failed backing up BIS")
+		}
+		p()
+	}
+	p()
+}
+
+backupSys = {
+	color(0xFF0000)
+	p("Backing up SYSTEM...")
+	color(0xFFFFFF)
+	
+	mkdir(combinepath(cwd(), "backup"))
+	path = combinepath(cwd(), "backup", "system")
+	mkdir(path)
+
+	if (mount("SYSTEM")){
+		fatal(fatalMsg = "Failed to mount SYSTEM")
+	}
+
+	if (copydir("bis:/Contents/registered", path)){
+		fatal(fatalMsg = "Failed to copy registered")
+	}
+
+	if (copyfile("bis:/save/8000000000000120", combinepath(path, "8000000000000120"))){
+		fatal(fatalMsg = "Failed to copy 120 save")
+	}
+	
+	p("\n")
+}
+
+signSave = {
+	color(0xFF0000)
+	p("Signing save...")
+	color(0xFFFFFF)
+	if (mount("SYSTEM")){
+		fatal(fatalMsg = "Failed to mount SYSTEM")
+	}
+	sav = readsave("bis:/save/8000000000000120")
+	if (sav.commit()){
+		fatal(fatalMsg = "Failed to sign save!")
+	}
+	sav = 0 # Free sav
+}
+
+writeBis = {
+	color(0xFF0000)
+	p("Writing BIS...")
+	color(0xFFFFFF)
+	toRestore = bisFiles.copy()
+	toRestore - 1
+	toRestore.foreach("x"){
+		print("Restoring", x + "... ")
+		if (mmcwrite(combinepath(cwd(), x), x)){
+			fatal(fatalMsg = "BIS write failed!!!")
+		}
+		p()
+	}
+	p()
+}
+
+writeSys = {
+	if (mount("SYSTEM")){
+		fatal(fatalMsg = "Failed to mount SYSTEM")
+	}
+	
+	color(0xFF0000)
+	print("Deleting SYSTEM contents... ")
+	color(0xFFFFFF)
+	if (deldir("bis:/Contents/registered")){
+		fatal(fatalMsg = "An error occured during SYSTEM deletion!")
+	}
+	p()
+	
+	color(0xFF0000)
+	print("Copying registered... ")
+	color(0xFFFFFF)
+	if (copydir(combinepath(cwd(), "SYSTEM/Contents/registered"), "bis:/Contents")) {
+		fatal(fatalMsg = "An error occured during SYSTEM copying!")
+	}
+	p()
+	
+	color(0xFF0000)
+	print("Copying 120 save... ")
+	color(0xFFFFFF)
+	if (copyfile(combinepath(cwd(), "SYSTEM/save/8000000000000120"), "bis:/save/8000000000000120")) {
+		fatal(fatalMsg = "Failed to copy system save")
+	}
+	p("\n")
+}
+
+actionRestoreBis = {
+	extractBis()
+	backupBis()
+	writeBis()
+}
+
+actionRestoreSys = {
+	backupSys()
+	writeSys()
+	signSave()
+}
+
+readBisAttrs()
+
+bootBisFound = !bisFileRes
+systemFolderFound = fsexists(combinepath(cwd(), "SYSTEM"))
+
+if ((!bootBisFound) && (!systemFolderFound)){
+	fatal(fatalMsg = "Nothing to restore found...\nPut a boot.bis and a SYSTEM dir from emmchaccgen next to this script!")
+}
+
+if (!bootBisFound){
+	p("Boot.bis not found. Cannot restore bis. Press any key to continue...")
+	pause()
+}
+
+if (!systemFolderFound){
+	p("SYSTEM dir not found. Cannot restore SYSTEM. Press any key to continue...")
+	pause()
+}
+
+useSys = 1
+
+if (emu()){
+	p("Switch System Restore\n")
+	res = menu(["Exit", "Apply on Sysmmc", "Apply on Emummc"], 0)
+	if (res == 0){
+		exit()
+	}
+	if (res == 2){
+		useSys = 0
+	}
+}
+
+if (useSys){
+	mmcread = emmcread
+	mmcwrite = emmcwrite
+	mount = mountsys
+}.else() {
+	mmcread = emummcread
+	mmcwrite = emummcwrite
+	mount = mountemu
+}
+
+clear()
+p("Switch System Restore")
+if (bootBisFound){
+	p("Target:", bisName)
+}
+p()
+
+res = menu(["Exit", "Restore BIS", "Restore SYSTEM", "Restore Both"], 0)
+if (res == 0){
+	exit()
+}
+
+clear()
+
+restoreBis = 0
+restoreSystem = 0
+
+if ((res == 1) || (res == 3)){
+	if (!bootBisFound){
+		fatal(fatalMsg = "Boot.bis not found...")
+	}
+	
+	restoreBis = 1
+}
+
+if ((res == 2) || (res == 3)){
+	if (!systemFolderFound){
+		fatal(fatalMsg = "SYSTEM dir not found...")
+	}
+	
+	restoreSystem = 1
+}
+
+clear()
+p("Switch System Restore")
+color(0xFF00)
+
+if (useSys){
+	mmcStr = "Sysmmc"
+}.else() {
+	mmcStr = "Emummc"
+}
+
+p("Restore BIS:", restoreBis)
+p("Restore SYSTEM:", restoreSystem)
+p("Restoring onto:", mmcStr)
+color(0xFFFFFF)
+p("Ready!")
+color(0xE70000) 
+print("WARNING!!!\nIf you do not know exactly what this does. STOP!!!\nThis will fuck with your system!\nOnly do this as a last ditch recovery effort!\n") 
+color(0x40FF00) 
+p("For help go here: https://discord.gg/C29hYvh\n") 
+color(0xFFFFFF)
+wait(tw = 10000)
+p("Press Power to start the restore, any other key to exit")
+if (!pause().power){
+	exit()
+}
+clear()
+
+startMs = timer()
+
+if (restoreBis){
+	actionRestoreBis()
+}
+
+if (restoreSystem){
+	actionRestoreSys()
+}
+
+p("\n\nFully done in", (timer() - startMs) / 1000 ,"seconds!\nPress any key to exit")
+pause()
