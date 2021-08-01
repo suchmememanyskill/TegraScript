@@ -20,7 +20,7 @@ Arrays in TegraScript can be of 4 types: StringArray, ByteArray, IntegerArray an
 strings = ["a", "b", "c"]
 numbers = [1,2,3,4,5]
 bytes = ["BYTE[]",1,2,3,4,5]
-empty = [] # Can be converted to other typed arrays by adding a veriable into it
+empty = [] # Can be converted to other typed arrays by adding a variable into it
 ```
 
 ## Variable usage
@@ -94,8 +94,8 @@ Comments in TegraScript are started with `#`, and last until the end of the line
 There are some special comments to aid in prerequisites.
 - `#REQUIRE VER x.x.x` Requires a minimum TegraScript version to run the script. x.x.x should be the minimum version, so like `#REQUIRE VER 4.0.0`
 - `#REQUIRE MINERVA` Requires extended memory to run the script. This should be used if you work with large files, saves or if your script is generally very big (20kb+)
-- `#REQUIRE KEYS` Requires keys to be dumped to run the script`
-- `#REQUIRE SD` Requires the sd to be mounted to run the script`
+- `#REQUIRE KEYS` Requires keys to be dumped to run the script
+- `#REQUIRE SD` Requires the sd to be mounted to run the script
 
 # Classes
 
