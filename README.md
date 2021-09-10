@@ -1,3 +1,7 @@
+# Scripts in this repo
+- [SystemRestoreV3](https://suchmememanyskill.github.io/TegraScript/scripts/SystemRestoreV3.te)
+- [Dump saves](https://suchmememanyskill.github.io/TegraScript/scripts/Dump_saves.te)
+
 # Syntax
 
 ## Variable assignment
