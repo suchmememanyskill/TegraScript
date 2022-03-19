@@ -1,0 +1,30 @@
+#REQUIRE KEYS
+
+system = ["Contents", "Contents/placehld", "Contents/registered", "save"]
+
+if(mountsys("SYSTEM")) {
+	print("SYSTEM mount failed!")
+	pause()
+	exit()
+}
+
+system.foreach("x") {
+	println("Creating", x, "in SYSTEM")
+	mkdir("bis:/" + x)
+}
+
+user = ["Album","Contents","Contents/placehld","Contents/registered","save","saveMeta","temp"]
+
+if(mountsys("USER")) {
+	print("USER mount failed!")
+	pause()
+	exit()
+}
+
+user.foreach("x") {
+	println("Creating", x, "in USER")
+	mkdir("bis:/" + x)
+}
+
+println("All done!")
+pause()
