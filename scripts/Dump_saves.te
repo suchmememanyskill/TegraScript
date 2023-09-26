@@ -10,7 +10,9 @@ partNames.foreach("x"){
 }
 
 if (emu()){
-	menuOptions.add("Emummc " + x)
+	partNames.foreach("x"){
+		menuOptions.add("Emummc " + x)
+	}
 }
 
 res = menu(menuOptions, 0)
