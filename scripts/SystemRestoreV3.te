@@ -178,6 +178,15 @@ writeSys = {
 	if (copyfile(combinepath(cwd(), "SYSTEM/save/8000000000000120"), "bis:/save/8000000000000120")) {
 		fatal(fatalMsg = "Failed to copy system save")
 	}
+
+	if (!fsexists("bis:/save/8000000000000000"))
+	{
+		p("\nWarning: 8000000000000000 does not exist. This save won't be signed! Copying")
+		if (copyfile(combinepath(cwd(), "SYSTEM/save/8000000000000000"), "bis:/save/8000000000000000")) {
+			fatal(fatalMsg = "Failed to copy fs save index save")
+		}
+	}
+
 	p("\n")
 }
 
