@@ -190,14 +190,20 @@ writeSys = {
 	p("\n")
 }
 
+backup = 1
+
 actionRestoreBis = {
 	extractBis()
-	backupBis()
+	if(backup){
+		backupBis()
+	}
 	writeBis()
 }
 
 actionRestoreSys = {
-	backupSys()
+	if(backup){
+		backupSys()
+	}
 	writeSys()
 	signSave()
 }
@@ -278,6 +284,16 @@ if ((res == 2) || (res == 3)){
 }
 
 clear()
+p("Switch System Restore\n")
+res = menu(["With Backup", "No Backup"], 0)
+if (res == 0){
+	backup = 1
+}
+if (res == 1){
+	backup = 0
+}
+
+clear()
 p("Switch System Restore")
 color(0xFF00)
 
@@ -288,6 +304,7 @@ if (useSys){
 }
 
 p("Restore BIS:", restoreBis)
+p("Make Backup:", backup)
 p("Restore SYSTEM:", restoreSystem)
 p("Restoring onto:", mmcStr)
 color(0xFFFFFF)
